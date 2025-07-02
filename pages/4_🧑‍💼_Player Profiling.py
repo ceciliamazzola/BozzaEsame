@@ -164,13 +164,22 @@ if df is not None:
         st.plotly_chart(score_fig, use_container_width=True)
 
 
+# Caricamento dati
+# Caricamento dati
+import streamlit as st
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+st.title("📈 Athletic Performance Comparison")
+df = pd.read_csv("Draft_Combine_00_25.csv")
+
 available_years = sorted(df['YEAR'].dropna().unique())
-selected_year = st.selectbox("Select draft year", available_years, index=len(available_years)-1, key="year")
+selected_year = st.selectbox("Select draft year", available_years, index=len(available_years)-1, key="athletic_year")
 df_year = df[df['YEAR'] == selected_year]
 player_names = sorted(df_year['PLAYER'].dropna().unique())
-selected_players = st.multiselect("Select players to compare", player_names, key="players")
 
-# Metriche atletiche
+selected_players = st.multiselect("Select 2 players to compare", player_names, max_selections=2)
+
 metric_labels = {
     "STNDVERT": "Standing Vertical Jump",
     "LPVERT": "Max Vertical Jump",
@@ -182,77 +191,90 @@ metric_labels = {
 colors = ["#f94144", "#f3722c", "#f8961e", "#43aa8b", "#577590", "#277da1"]
 athletic_metrics = list(metric_labels.keys())
 
-# Styling
+selected_metrics = st.multiselect("Select athletic metrics to compare", athletic_metrics, default=athletic_metrics)
+
 st.markdown("""
     <style>
-        .player-card {
-            background-color: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1rem auto;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        .bar-wrapper {
-            background-color: #ddd;
-            height: 22px;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-        .bar {
-            height: 100%;
-            color: white;
-            font-weight: bold;
-            text-align: right;
-            padding-right: 8px;
-            line-height: 22px;
-            font-size: 13px;
-        }
         .metric-label {
             font-weight: bold;
             color: #333;
-            margin-top: 8px;
+            margin-top: 12px;
+            margin-bottom: 4px;
         }
-        .player-name {
-            font-size: 20px;
+        .bar-wrapper {
+            background-color: #ddd;
+            height: 28px;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar {
+            height: 100%;
             font-weight: bold;
-            margin-bottom: 1rem;
-            color: #222;
+            text-align: right;
+            padding-right: 12px;
+            line-height: 28px;
+            font-size: 16px;
+            color: transparent;
+        }
+        .bar-value {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            height: 28px;
+            line-height: 28px;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Elaborazione
-if selected_players:
-    partial_df = df_year[df_year['PLAYER'].isin(selected_players)][['PLAYER'] + athletic_metrics]
+if len(selected_players) == 2 and selected_metrics:
+    player1_data = df_year[df_year['PLAYER'] == selected_players[0]][selected_metrics]
+    player2_data = df_year[df_year['PLAYER'] == selected_players[1]][selected_metrics]
 
-    for player in selected_players:
-        player_row = partial_df[partial_df['PLAYER'] == player]
-        if player_row.empty:
-            continue
+    if not player1_data.empty and not player2_data.empty:
+        combined = pd.concat([player1_data, player2_data]).dropna(axis=1)
+        used_metrics = combined.columns.tolist()
 
-        available_metrics = player_row.drop(columns='PLAYER').dropna(axis=1).columns.tolist()
-        if not available_metrics:
-            continue
+        col1, col2 = st.columns(2)
 
-        raw_values = player_row[available_metrics].iloc[0]
-        scaler = MinMaxScaler()
-        norm_vals = scaler.fit_transform(player_row[available_metrics].fillna(0).values.reshape(1, -1))[0]
+        for j, metric in enumerate(used_metrics):
+            label = metric_labels.get(metric, metric)
+            val1 = player1_data[metric].values[0]
+            val2 = player2_data[metric].values[0]
 
-        st.markdown(f"<div class='player-card'><div class='player-name'>{player}</div>", unsafe_allow_html=True)
-        for i, metric in enumerate(available_metrics):
-            label = metric_labels[metric]
-            raw_value = raw_values[metric]
-            bar_value = norm_vals[i] * 100
-            color = colors[i % len(colors)]
-            st.markdown(f"""
-                <div class='metric-label'>{label}</div>
-                <div class='bar-wrapper'>
-                    <div class='bar' style='width:{bar_value:.1f}%; background-color:{color};'>{raw_value}</div>
-                </div>
-            """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+            if metric in ["LANE", "SHUTTLE", "SPRINT"]:
+                best_is_lower = True
+            else:
+                best_is_lower = False
+
+            color = colors[j % len(colors)]
+
+            if (val1 < val2 and best_is_lower) or (val1 > val2 and not best_is_lower):
+                percent1, percent2 = 100, 0
+            elif (val2 < val1 and best_is_lower) or (val2 > val1 and not best_is_lower):
+                percent1, percent2 = 0, 100
+            else:
+                percent1 = percent2 = 100
+
+            with col1:
+                st.markdown(f"<div class='metric-label'>{label}</div>", unsafe_allow_html=True)
+                st.markdown(f"""
+                    <div class='bar-wrapper'>
+                        <div class='bar' style='width:{percent1:.1f}%; background-color:{color if percent1 > 0 else '#ddd'};'></div>
+                        <div class='bar-value'>{val1}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+
+            with col2:
+                st.markdown(f"<div class='metric-label'>&nbsp;</div>", unsafe_allow_html=True)
+                st.markdown(f"""
+                    <div class='bar-wrapper'>
+                        <div class='bar' style='width:{percent2:.1f}%; background-color:{color if percent2 > 0 else '#ddd'};'></div>
+                        <div class='bar-value'>{val2}</div>
+                    </div>
+                """, unsafe_allow_html=True)
 else:
-    st.info("Select players to display their athletic metrics.")
+    st.info("Please select exactly two players and at least one metric to compare.")

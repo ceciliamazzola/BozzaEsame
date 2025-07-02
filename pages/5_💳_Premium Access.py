@@ -1,9 +1,23 @@
 import streamlit as st
 
+# CONFIGURAZIONE DELLA PAGINA
 st.set_page_config(page_title="Premium Access", page_icon="💳")
 
+# CSS: Font Orbitron + sfondo petrolio
 st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            background-color: #2c6a6d;
+            color: white;
+        }
+        .reportview-container, .main, .block-container {
+            background-color: #2c6a6d !important;
+            color: white !important;
+        }
+        h1, h2, h3, h4, h5, h6, p, li {
+            color: white !important;
+        }
         .plan-card {
             border: 2px solid #f45208;
             border-radius: 10px;
@@ -41,12 +55,24 @@ st.markdown("""
         .select-btn:hover {
             background-color: #d44107;
         }
+        .title-font {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 42px;
+            color: #f45208;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Unlock Premium Basketball Analytics")
+# TITOLO PERSONALIZZATO
+st.markdown("<div class='title-font'>Unlock Premium Basketball Analytics</div>", unsafe_allow_html=True)
+
+# SOTTOTITOLO
 st.write("Get exclusive access to advanced player metrics, draft insights, and real-time analytics that give you the competitive edge.")
 
+# PIANI DI ABBONAMENTO
 plans = [
     {
         "name": "Starter",
@@ -69,7 +95,7 @@ plans = [
     }
 ]
 
-selected_plan = None
+# RENDERING DEI PIANI
 cols = st.columns(3)
 for idx, plan in enumerate(plans):
     with cols[idx]:
@@ -88,6 +114,7 @@ for idx, plan in enumerate(plans):
             </div>
         """, unsafe_allow_html=True)
 
+# SEZIONE FINALE
 st.markdown("---")
 st.subheader("Start Your Trial")
 
@@ -102,3 +129,4 @@ with st.form("payment_form"):
     submitted = st.form_submit_button("Start Free Trial")
     if submitted:
         st.success(f"Subscription started for {email}!")
+
