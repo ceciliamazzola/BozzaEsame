@@ -10,8 +10,8 @@ import os
 # Percorsi portabili
 current_dir = Path(__file__).parent
 df_path = current_dir.parent / "draft_history_fin.csv"
-logo_folder = current_dir / "logos"
-image_path = current_dir / "bandiere" / "mappa.png"
+logo_folder = current_dir.parent / "logos"
+image_path = current_dir.parent / "bandiere" / "mappa.png"
 
 # 🌐 Stile personalizzato Orbitron
 st.markdown("""
