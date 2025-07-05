@@ -7,3 +7,4 @@ plotly>=5.0.0
 scikit-learn
 streamlit-aggrid
 nba_api
+Pillow
