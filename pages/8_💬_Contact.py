@@ -33,6 +33,25 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Bottone indietro
+st.markdown("""
+    <form action="/" method="get">
+        <button type="submit" style="
+            padding: 10px 20px;
+            background-color: #f45208;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;">
+            ⬅️ Back to Menu
+        </button>
+    </form>
+""", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)  # Una riga vuota
+
 # Box informativo con stile coerente
 st.markdown("""
 <div class="info-box">

@@ -60,6 +60,7 @@ st.markdown("""
     </form>
 """, unsafe_allow_html=True)
 
+st.markdown("<br>", unsafe_allow_html=True)  # Una riga vuota
 # Caricamento dati e loghi
 try:
     df = pd.read_csv("/workspaces/BozzaEsame/draft_history_fin.csv")

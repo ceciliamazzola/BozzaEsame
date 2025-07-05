@@ -38,30 +38,35 @@ st.markdown(f"""
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            overflow: hidden;
         }}
         .left-block {{
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-77%); /* Sposta il blocco più verso il centro */
+            width: 600px;
+            height: 800px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: flex-start;
-            padding-left: 1rem;
-            margin-top: 1rem;
-            height: 90vh;
+            z-index: 10;
         }}
         .title-left {{
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: 6rem;
+            font-size: 80px;
             color: #f45208;
             -webkit-text-stroke: 3px white;
             text-shadow: 5px 5px 10px rgba(0,0,0,0.3);
             line-height: 1.1;
-            margin-bottom: 2rem;
+            margin-bottom: 40px;
             text-align: left;
         }}
         .subtitle-effect {{
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
+            font-size: 24px;
             color: white;
             animation: fadeIn 2s ease-in-out;
             transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
@@ -73,20 +78,20 @@ st.markdown(f"""
         }}
         .subtitle-left {{
             text-align: left;
-            line-height: 2.4rem;
-            max-width: 600px;
-            margin-top: 6rem;
-            margin-left: 1rem;
+            line-height: 36px;
+            max-width: 550px;
+            margin-top: 60px;
+            margin-left: 10px;
         }}
         .menu-labels {{
-            margin-top: 4rem;
+            margin-top: 80px;
             display: flex;
-            gap: 2rem;
-            margin-left: 1rem;
+            gap: 30px;
+            margin-left: 10px;
         }}
         .menu-item {{
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.4rem;
+            font-size: 20px;
             color: white;
             background-color: rgba(0, 0, 0, 0.4);
             padding: 10px 20px;
