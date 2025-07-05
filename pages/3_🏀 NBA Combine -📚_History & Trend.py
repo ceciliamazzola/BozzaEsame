@@ -1,9 +1,19 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 from pathlib import Path
 from PIL import Image
+import base64
+from io import BytesIO
+import os
 
-# 🌐 Tema chiaro con font Orbitron e stili personalizzati
+# Percorsi portabili
+current_dir = Path(__file__).parent
+df_path = current_dir / "draft_history_fin.csv"
+logo_folder = current_dir / "logos"
+image_path = current_dir / "bandiere" / "mappa.png"
+
+# 🌐 Stile personalizzato Orbitron
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
@@ -11,13 +21,11 @@ st.markdown("""
 
         h1 { font-family: 'Orbitron', sans-serif !important; color: #f45208 !important; font-size: 2.5rem !important; }
 
-        /* Titoli dei form */
         label, .stSelectbox label {
             color: black !important;
             font-weight: 600 !important;
         }
 
-        /* Valori selezionati nei menu */
         .css-1jqq78o-control, .css-1pahdxg-control,
         .css-qbdosj-Input, .css-1dimb5e-singleValue {
             color: black !important;
@@ -60,10 +68,11 @@ st.markdown("""
     </form>
 """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)  # Una riga vuota
-# Caricamento dati e loghi
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Dati draft
 try:
-    df = pd.read_csv("/workspaces/BozzaEsame/draft_history_fin.csv")
+    df = pd.read_csv(df_path)
     years = df["Year"].dropna().unique().astype(int)
     year = st.selectbox("Select a year", sorted(years))
 
@@ -78,7 +87,6 @@ try:
     )
 
     st.subheader(f"Draft {year} - Round {round_selected}")
-    logo_folder = Path("/workspaces/BozzaEsame/logos")
 
     def find_logo(abbrev):
         for ext in [".png", ".jpg", ".jpeg", ".svg"]:
@@ -87,7 +95,6 @@ try:
                 return path
         return None
 
-    # Elenco dei giocatori
     for _, r in filtered.iterrows():
         col1, col2, col3 = st.columns([1, 4, 2])
 
@@ -113,15 +120,7 @@ try:
 except Exception as e:
     st.error(f"Failed to load data: {e}")
 
-
-
-#grafico torta 
-import plotly.express as px
-import pandas as pd
-import plotly.express as px
-import plotly.express as px
-
-# 🧩 Spazio sopra il selettore + stile etichetta
+# 📊 Grafico affiliations
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
     <label style='font-size:18px; font-weight:bold; color:black; font-family:Source Sans;'>
@@ -129,21 +128,16 @@ st.markdown("""
     </label>
 """, unsafe_allow_html=True)
 
-# Selettore dinamico
 top_n = st.selectbox("", [5, 10, 15], label_visibility="collapsed")
-
-# Prepara i dati
 top_affiliations = df['Affiliation'].value_counts().head(top_n).reset_index()
 top_affiliations.columns = ['Affiliation', 'Players']
 
-# Titolo sopra al grafico
 st.markdown(f"""
     <h3 style='font-family: Orbitron, sans-serif; color:#000000; margin-bottom: 0.5em;'>
         Top {top_n} Player Affiliations Before Draft
     </h3>
 """, unsafe_allow_html=True)
 
-# Grafico a barre orizzontali
 fig = px.bar(
     top_affiliations,
     x='Players',
@@ -154,13 +148,11 @@ fig = px.bar(
     color_continuous_scale='Blues'
 )
 
-# Etichette nere
 fig.update_traces(
     textposition='outside',
     textfont_color='black'
 )
 
-# Layout nero e pulito, con colorbar etichettata nera
 fig.update_layout(
     plot_bgcolor='#f7f7f7',
     paper_bgcolor='#f7f7f7',
@@ -186,40 +178,26 @@ fig.update_layout(
     margin=dict(t=20, b=40, l=100, r=40)
 )
 
-# Mostra grafico
 st.plotly_chart(fig, use_container_width=True)
 
-#grafico players origin 
-import plotly.express as px
-import pandas as pd
-import base64
-from pathlib import Path
-import streamlit as st
-# 🖼️ Titolo sezione immagine finale
+# 🌍 Mappa immagine
 st.markdown("""
     <h3 style='font-family: Orbitron, sans-serif; color:#000000; margin-top: 2em;'>
         Player origin before draft
     </h3>
 """, unsafe_allow_html=True)
 
-
-# 📷 Percorso immagine e visualizzazione centrata
-import base64
-from io import BytesIO
-
 def image_to_base64(image):
     buffered = BytesIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
-image_path = Path("/workspaces/BozzaEsame/bandiere/mappa.png")
 if image_path.exists():
     image = Image.open(image_path)
 
-    # Usa HTML per centrare l'immagine
     st.markdown(f"""
         <div style='display: flex; justify-content: center; align-items: center;'>
-            <img src='data:image/png;base64,{image_to_base64(image)}' width='800'/>
+            <img src='data:image/png;base64,{image_to_base64(image)}' style='max-width: 90%; height: auto;'/>
         </div>
     """, unsafe_allow_html=True)
 else:
