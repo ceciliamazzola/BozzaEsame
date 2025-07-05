@@ -100,12 +100,6 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Player selector
-st.markdown("<label style='color: black; font-weight: bold;'>Select a player:</label>", unsafe_allow_html=True)
-players = sorted(career_df['player'].unique())
-selected_player = st.selectbox("", options=players, index=players.index("LeBron James") if "LeBron James" in players else 0)
-
-
 # Bottone indietro
 st.markdown("""
     <form action="/" method="get">
@@ -124,6 +118,14 @@ st.markdown("""
     </form>
 """, unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)  # Una riga vuota
+
+# Player selector
+st.markdown("<label style='color: black; font-weight: bold;'>Select a player:</label>", unsafe_allow_html=True)
+players = sorted(career_df['player'].unique())
+selected_player = st.selectbox("", options=players, index=players.index("LeBron James") if "LeBron James" in players else 0)
+
+
+
 # ----------------------
 # Player Image
 # ----------------------
