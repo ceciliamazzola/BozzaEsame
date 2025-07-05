@@ -253,7 +253,10 @@ with col2:
 
 
 # … codice precedente ai radar …
-logo_dir="/workspaces/BozzaEsame/logos"
+from pathlib import Path
+
+current_dir = Path(__file__).parent
+logo_dir = current_dir.parent / "logos"
 
 # Carico di nuovo il raw dataframe (non solo career_df), per poter pescare le stagioni
 @st.cache_data
@@ -366,10 +369,10 @@ for label, value in season_stats.items():
     if label == "Team":
         # cerco il file logo
         logo_path, logo_ext = None, None
-        for ext in ("png","jpg","jpeg"):
-            p = os.path.join(logo_dir, f"{value}.{ext}")
-            if os.path.isfile(p):
-                logo_path, logo_ext = p, ext
+        for ext in ("png", "jpg", "jpeg"):
+            candidate = logo_dir / f"{value}.{ext}"
+            if candidate.is_file():
+                logo_path, logo_ext = candidate, ext
                 break
 
         if logo_path:
