@@ -9,7 +9,7 @@ import os
 
 # Percorsi portabili
 current_dir = Path(__file__).parent
-df_path = current_dir / "draft_history_fin.csv"
+df_path = current_dir.parent / "draft_history_fin.csv"
 logo_folder = current_dir / "logos"
 image_path = current_dir / "bandiere" / "mappa.png"
 
