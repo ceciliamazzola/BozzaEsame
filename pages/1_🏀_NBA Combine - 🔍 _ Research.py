@@ -70,9 +70,23 @@ if 'POS' in df.columns:
     with st.sidebar:
         st.title("Filter Players")
 
+        # Valori iniziali predefiniti
+        initial_values = {
+            "selected_years": years,
+            "selected_pos": [],
+            "selected_college": [],
+            "height_range": (int(df['HGT'].min()), int(df['HGT'].max())),
+            "bmi_range": (float(df['BMI'].min()), float(df['BMI'].max())),
+            "wingspan_range": (float(df['WNGSPN'].min()), float(df['WNGSPN'].max())),
+            "stndrch_range": (float(df['STNDRCH'].min()), float(df['STNDRCH'].max())),
+            "vert_range": (float(df['LPVERT'].min()), float(df['LPVERT'].max())),
+            "sprint_range": (float(df['SPRINT'].min()), float(df['SPRINT'].max())),
+            "first_pick_only": False
+        }
+
         if st.button("Clear Filters"):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
+            for key, value in initial_values.items():
+                st.session_state[key] = value
             st.rerun()
 
         selected_years = st.multiselect("Draft Year", years, default=years, key="selected_years")
