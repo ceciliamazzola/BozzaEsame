@@ -6,7 +6,7 @@ def get_base64_image(image_path):
         return f"data:image/png;base64,{base64.b64encode(img.read()).decode()}"
 
 # Carica immagine di sfondo
-image_base64 = get_base64_image("/workspaces/BozzaEsame/bandiere/prova4.png")
+image_base64 = get_base64_image("/workspaces/bandiere/prova4.png")
 
 # Configura la pagina
 st.set_page_config(page_title="Home - DRAFT TO DINASTY", page_icon="")
