@@ -268,7 +268,7 @@ if df is not None:
 import streamlit as st
 import pandas as pd
 
-st.title("Athletic Performance Comparison")
+st.subheader("Athletic Performance Comparison")
 df = pd.read_csv("Draft_Combine_00_25.csv")
 
 # Selezione anno e giocatori
